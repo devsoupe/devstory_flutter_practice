@@ -17,15 +17,17 @@ class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
 
   /// 카트에 담긴 상품 목록
-  List<Product> cartProductList = [];
+  List<Product> cartProductList = const [];
 
   /// 상품 클릭
   void onProductPressed(Product product) {
     setState(() {
       if (cartProductList.contains(product)) {
-        cartProductList.remove(product);
+        // cartProductList.remove(product);
+        cartProductList = cartProductList.where((element) => element != product).toList();
       } else {
-        cartProductList.add(product);
+        // cartProductList.add(product);
+        cartProductList = [...cartProductList, product];
       }
     });
   }
@@ -46,12 +48,18 @@ class _HomePageState extends State<HomePage> {
             Cart(),
           ],
         ),
-        bottomNavigationBar: BottomBar(
-          currentIndex: currentIndex,
-          cartTotal: "0",
-          onTap: (index) => setState(() {
-            currentIndex = index;
-          }),
+        bottomNavigationBar: Builder(
+          builder: (context) {
+            final inheritedCart = context.read<InheritedCart>();
+
+            return BottomBar(
+              currentIndex: currentIndex,
+              cartTotal: "${inheritedCart.cartProductList.length}",
+              onTap: (index) => setState(() {
+                currentIndex = index;
+              }),
+            );
+          },
         ),
       ),
     );
